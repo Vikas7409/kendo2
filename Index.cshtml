@@ -1,0 +1,180 @@
+@model IEnumerable<vikasApplication.Models.UsersModel>
+
+
+<div id="grid"></div>
+
+
+<script>
+const { type } = require("jquery");
+
+
+    $(document).ready(function () {
+        var dataSource = new kendo.data.DataSource({
+            transport: {
+                read: function (options) {
+                    $.ajax({
+                        type: "POST",
+                        url: "User/IndexPost",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: 'json',
+                        success: function (data) {
+                            console.log("result" + JSON.stringify(data))
+                            options.success(data);
+                        }
+                    });
+
+                }
+            }
+        });
+
+        $("#grid").kendoGrid({
+            toolbar: ["excel", "pdf", "search"],
+            excel: {
+                fileName: "Test.xlsx",
+                allPages: true,
+
+                fileName: "Demo Excel From Kendo.xlsx",
+                allPages: true
+            },
+            //toolbar: ["excel"],
+            //excel: {
+            //    allPages: true
+            //},
+
+
+            //toolbar: ["excel"],
+            //excel: {
+            //    fileName: "Demo Excel From Kendo.xlsx",
+            //    filterable: true,  //Allow Filtering
+            //    allPages: true
+            //},
+
+
+            // faltu.....
+
+
+            //sortable: {
+            //    mode: "mixed",
+            //    allowUnsort: true,
+            //    showIndexes: true
+            //},
+
+            // page layout
+            pageable: {
+                buttonCount: 5
+            },
+            // column filter option
+            filterable: {
+                multi: true,
+                search: true
+            }, filterable: true,
+
+
+            columns: [
+                
+                { field: "id" },
+                { field: "firstName" },
+                { field: "lastName" },
+                { field: "email" },
+                { field: "password" },
+                { field: "mobile" },
+                { field: "adress" },
+                { field: "pincode" },
+                { field: "status" },
+
+            ],
+
+            sortable: true,
+            columnMenu: true,
+
+            dataSource: dataSource
+        })
+
+        //.Filterable()
+        //.Sortable()
+        //.Navigatable()
+        //.scrollable();
+        //    .Excel(excel => excel
+        //        .FileName("Kendo UI Grid Export.xlsx")
+        //        .Filterable(true)
+        //        .ProxyURL(Url.Action("Excel_Export_Save", "Grid"))
+        //)
+
+
+
+        //var grid = $("#grid").data("kendoGrid");
+        //alert("are you sure");
+
+        //debugger
+        //var ds = grid.dataSource.view();
+        //var dslength = ds.length;
+
+        //if (dataSource > 0) {
+        //    debugger
+        //    for (var i = 0; i < dataSource; i++) {
+        //        var currRow = ds[i];
+        //        //trying to get checkbox value here.
+        //    }
+        //}
+
+
+
+
+        $(document).on('click', '.k-checkbox', function (e) {
+            getCheckunCheckData();
+        });
+
+
+
+        function getCheckunCheckData() {
+            var CheckedItem = [];
+            var UncheckedItem = [];
+            //$('.k-menu-group li').each(function (key, val) {
+            //    debugger;
+            //    if (val.attributes['aria-checked'].value == 'true') {
+            //        CheckedItem.add(this);
+            //    } else if (val.attributes['aria-checked'].value == 'false') {
+            //        UncheckedItem.add(this);
+            //    }
+            //});
+            $('.k-checkbox').each(function (key, val) {
+                var isChecked = this.parentNode.parentNode.parentNode.attributes['aria-checked'].value;
+                var
+                    Data = {
+                        DataField: this.attributes['data-field'].value,
+                        DataValue: this.attributes['data-uid'].value,
+                        chkStatus: isChecked,
+                    }
+                CheckedItem.push(Data);
+                //if (isChecked == 'true') {
+
+                //} else if (isChecked == 'false') {
+                //    UncheckedItem.push(Data);
+                //}
+            });
+            console.log(CheckedItem);
+            InsertData(CheckedItem);
+            //console.log(UncheckedItem);
+        }
+    });
+
+    function InsertData(CheckedItem) {
+        debugger;
+       
+        var objTableDetails = JSON.stringify(CheckedItem);
+       
+        $.ajax({
+            type: "POST",
+            url: "User/check",
+            dataType: 'json',
+            data: { 'data': objTableDetails},
+            success: function (data) {
+                console.log("result" + JSON.stringify(data))
+                options.success(data);
+            }
+        });
+
+
+    }
+
+</script>
